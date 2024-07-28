@@ -2,6 +2,7 @@ package fsquota
 
 import (
 	"bufio"
+	"errors"
 	"os"
 	"strconv"
 	"strings"
@@ -9,6 +10,11 @@ import (
 
 	"github.com/hashicorp/go-version"
 )
+
+type Project struct {
+	ID   string
+	Name string
+}
 
 var expectedKernelVersion = version.Must(version.NewVersion("4.6.0"))
 
@@ -44,6 +50,7 @@ func isKernel46OrLater() (is46OrLater bool, err error) {
 
 const passwdFile = "/etc/passwd"
 const groupFile = "/etc/group"
+const projectFile = "/etc/projid"
 
 func getIDsFromUserOrGroupFile(path string) (ids []uint32, err error) {
 	var f *os.File
@@ -76,4 +83,76 @@ func getIDsFromUserOrGroupFile(path string) (ids []uint32, err error) {
 	}
 
 	return
+}
+
+func getIDsFromProjectFile(path string) (ids []uint32, err error) {
+	var file *os.File
+	if file, err = os.Open(path); err != nil {
+		return
+	}
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lineParts := strings.Split(scanner.Text(), ":")
+		var id uint64
+		if id, err = strconv.ParseUint(lineParts[1], 10, 32); err == nil {
+			ids = append(ids, uint32(id))
+		}
+	}
+
+	// return if unable to close file
+	if err = file.Close(); err != nil {
+		return
+	}
+
+	return
+}
+
+func getProjects() (projects []Project, err error) {
+	var file *os.File
+	if file, err = os.Open(projectFile); err != nil {
+		return
+	}
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		var newProject Project
+		lineParts := strings.Split(scanner.Text(), ":")
+		newProject.Name = lineParts[0]
+		newProject.ID = lineParts[1]
+
+		projects = append(projects, newProject)
+	}
+
+	return
+}
+
+func LookupProject(name string) (project *Project, err error) {
+	var projects []Project
+	if projects, err = getProjects(); err != nil {
+		return
+	}
+
+	for _, proj := range projects {
+		if proj.Name == name {
+			return &proj, nil
+		}
+	}
+
+	return project, errors.New("no project found with that name")
+}
+
+func LookupProjectID(id string) (project *Project, err error) {
+	var projects []Project
+	if projects, err = getProjects(); err != nil {
+		return
+	}
+
+	for _, proj := range projects {
+		if proj.ID == id {
+			return &proj, nil
+		}
+	}
+
+	return project, errors.New("no project found with that name")
 }

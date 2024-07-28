@@ -2,15 +2,13 @@ package main
 
 import (
 	"errors"
-	"os/user"
-
 	"github.com/parkervcp/fsquota"
 	"github.com/spf13/cobra"
 )
 
-var cmdUserSet = &cobra.Command{
-	Use:   "set path user",
-	Short: "Sets quota configuration for a given user",
+var cmdProjectSet = &cobra.Command{
+	Use:   "set path project",
+	Short: "Sets quota configuration for a given project",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if len(args) != 2 {
 			err = errors.New("exactly two arguments required")
@@ -22,19 +20,19 @@ var cmdUserSet = &cobra.Command{
 		var parseErr error
 
 		if bytesSoft, bytesHard, bytesPresent, parseErr = parseLimitsFlag(cmd, "bytes"); parseErr != nil {
-			err = errortree.Add(err, "bytes", parseErr)
+			return err
 		}
 
 		if filesSoft, filesHard, filesPresent, parseErr = parseLimitsFlag(cmd, "files"); parseErr != nil {
-			err = errortree.Add(err, "files", parseErr)
+			return err
 		}
 
 		if err != nil {
 			return
 		}
 
-		var u *user.User
-		if u, err = lookupUser(args[1]); err != nil {
+		var p *fsquota.Project
+		if p, err = lookupProject(args[1]); err != nil {
 			return
 		}
 
@@ -56,7 +54,7 @@ var cmdUserSet = &cobra.Command{
 			return
 		}
 
-		if info, err = fsquota.SetUserQuota(args[0], u, limits); err != nil {
+		if info, err = fsquota.SetProjectQuota(args[0], p, limits); err != nil {
 			return
 		}
 
@@ -66,7 +64,7 @@ var cmdUserSet = &cobra.Command{
 }
 
 func init() {
-	cmdUserSet.Flags().StringP("bytes", "b", "", "Byte limit in soft,hard format. ie. 1MiB,2GiB")
-	cmdUserSet.Flags().StringP("files", "f", "", "File limit in soft,hard format, ie. 1M,2G")
-	cmdUser.AddCommand(cmdUserSet)
+	cmdProjectSet.Flags().StringP("bytes", "b", "", "Byte limit in soft,hard format. ie. 1MiB,2GiB")
+	cmdProjectSet.Flags().StringP("files", "f", "", "File limit in soft,hard format, ie. 1M,2G")
+	cmdGroup.AddCommand(cmdProjectSet)
 }

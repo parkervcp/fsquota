@@ -24,6 +24,8 @@ const (
 	userQuota quotaCtlType = 0
 	// GRPQUOTA
 	groupQuota = 1
+	// PRJQUOTA
+	projectQuota = 2
 )
 
 const (

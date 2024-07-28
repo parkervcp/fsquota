@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/anexia-it/fsquota"
+	"github.com/parkervcp/fsquota"
 	"github.com/spf13/cobra"
 )
 

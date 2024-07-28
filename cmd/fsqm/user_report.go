@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os/user"
 
-	"github.com/anexia-it/fsquota"
+	"github.com/parkervcp/fsquota"
 	"github.com/spf13/cobra"
 )
 

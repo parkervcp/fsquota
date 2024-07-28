@@ -2,20 +2,19 @@ package main
 
 import (
 	"errors"
-	"os/user"
 
 	"github.com/parkervcp/fsquota"
 	"github.com/spf13/cobra"
 )
 
-func lookupGroupNameByGid(gid string) string {
-	if g, err := user.LookupGroupId(gid); err == nil {
-		return g.Name
+func lookupProjectNameByID(id string) string {
+	if p, err := fsquota.LookupProjectID(id); err == nil {
+		return p.Name
 	}
-	return gid
+	return id
 }
 
-var cmdGroupReport = &cobra.Command{
+var cmdProjectReport = &cobra.Command{
 	Use:   "report path",
 	Short: "Retrieves quota report for a given path",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -29,7 +28,7 @@ var cmdGroupReport = &cobra.Command{
 			return
 		}
 
-		lookupFn := lookupGroupNameByGid
+		lookupFn := lookupProjectNameByID
 
 		if wantNumeric, _ := cmd.Flags().GetBool("numeric"); wantNumeric {
 			lookupFn = noopLookup
@@ -41,6 +40,6 @@ var cmdGroupReport = &cobra.Command{
 }
 
 func init() {
-	cmdGroupReport.Flags().BoolP("numeric", "n", false, "Print numeric group IDs")
-	cmdGroup.AddCommand(cmdGroupReport)
+	cmdProjectReport.Flags().BoolP("numeric", "n", false, "Print numeric group IDs")
+	cmdGroup.AddCommand(cmdProjectReport)
 }

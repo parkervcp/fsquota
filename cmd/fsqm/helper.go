@@ -5,9 +5,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/anexia-it/fsquota"
 	"github.com/dustin/go-humanize"
-	"github.com/speijnik/go-errortree"
+	"github.com/parkervcp/fsquota"
 	"github.com/spf13/cobra"
 )
 
@@ -68,13 +67,12 @@ func parseLimitsFlag(cmd *cobra.Command, flagName string) (soft, hard uint64, pr
 		return
 	}
 
-	var convErr error
-	if soft, convErr = humanize.ParseBytes(valueParts[0]); convErr != nil {
-		err = errortree.Add(err, "soft", convErr)
+	if soft, err = humanize.ParseBytes(valueParts[0]); err != nil {
+		return 0, 0, false, err
 	}
 
-	if hard, convErr = humanize.ParseBytes(valueParts[1]); convErr != nil {
-		err = errortree.Add(err, "hard", convErr)
+	if hard, err = humanize.ParseBytes(valueParts[1]); err != nil {
+		return 0, 0, false, err
 	}
 
 	return
