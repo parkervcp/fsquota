@@ -40,6 +40,7 @@ func printReport(cmd *cobra.Command, report *fsquota.Report, reportType string, 
 	}
 }
 
+// isNumeric returns true if a string is numeric
 func isNumeric(s string) bool {
 	for _, c := range s {
 		if !unicode.IsDigit(c) {

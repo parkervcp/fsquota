@@ -17,7 +17,9 @@ func init() {
 
 func lookupProject(projectIdOrName string) (prj *fsquota.Project, err error) {
 	if isNumeric(projectIdOrName) {
-		prj.ID = projectIdOrName
+		prj = &fsquota.Project{
+			ID: projectIdOrName,
+		}
 		return
 	}
 
