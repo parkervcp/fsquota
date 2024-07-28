@@ -72,11 +72,11 @@ func getGroupInfo(path string, group *user.Group) (info *Info, err error) {
 }
 
 func setProjectQuota(path string, project *Project, limits *Limits) (info *Info, err error) {
-	return setQuota(projectQuota, path, project.Id, limits)
+	return setQuota(projectQuota, path, project.ID, limits)
 }
 
 func getProjectInfo(path string, project *Project) (info *Info, err error) {
-	return getQuota(projectQuota, path, project.Id)
+	return getQuota(projectQuota, path, project.ID)
 }
 
 func pathToDevice(path string) (device string, err error) {
