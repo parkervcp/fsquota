@@ -19,14 +19,13 @@ var cmdUserSet = &cobra.Command{
 
 		var bytesSoft, bytesHard, filesSoft, filesHard uint64
 		var bytesPresent, filesPresent bool
-		var parseErr error
 
-		if bytesSoft, bytesHard, bytesPresent, parseErr = parseLimitsFlag(cmd, "bytes"); parseErr != nil {
-			err = errortree.Add(err, "bytes", parseErr)
+		if bytesSoft, bytesHard, bytesPresent, err = parseLimitsFlag(cmd, "bytes"); err != nil {
+			return err
 		}
 
-		if filesSoft, filesHard, filesPresent, parseErr = parseLimitsFlag(cmd, "files"); parseErr != nil {
-			err = errortree.Add(err, "files", parseErr)
+		if filesSoft, filesHard, filesPresent, err = parseLimitsFlag(cmd, "files"); err != nil {
+			return err
 		}
 
 		if err != nil {
