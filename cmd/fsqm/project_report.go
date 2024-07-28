@@ -24,7 +24,7 @@ var cmdProjectReport = &cobra.Command{
 		}
 
 		var report *fsquota.Report
-		if report, err = fsquota.GetGroupReport(args[0]); err != nil {
+		if report, err = fsquota.GetProjectReport(args[0]); err != nil {
 			return
 		}
 
@@ -34,12 +34,12 @@ var cmdProjectReport = &cobra.Command{
 			lookupFn = noopLookup
 		}
 
-		printReport(cmd, report, "group", lookupFn)
+		printReport(cmd, report, "project", lookupFn)
 		return
 	},
 }
 
 func init() {
-	cmdProjectReport.Flags().BoolP("numeric", "n", false, "Print numeric group IDs")
+	cmdProjectReport.Flags().BoolP("numeric", "n", false, "Print numeric 		project IDs")
 	cmdProject.AddCommand(cmdProjectReport)
 }
