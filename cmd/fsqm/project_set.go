@@ -66,5 +66,5 @@ var cmdProjectSet = &cobra.Command{
 func init() {
 	cmdProjectSet.Flags().StringP("bytes", "b", "", "Byte limit in soft,hard format. ie. 1MiB,2GiB")
 	cmdProjectSet.Flags().StringP("files", "f", "", "File limit in soft,hard format, ie. 1M,2G")
-	cmdGroup.AddCommand(cmdProjectSet)
+	cmdProject.AddCommand(cmdProjectSet)
 }

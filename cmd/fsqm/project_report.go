@@ -41,5 +41,5 @@ var cmdProjectReport = &cobra.Command{
 
 func init() {
 	cmdProjectReport.Flags().BoolP("numeric", "n", false, "Print numeric group IDs")
-	cmdGroup.AddCommand(cmdProjectReport)
+	cmdProject.AddCommand(cmdProjectReport)
 }

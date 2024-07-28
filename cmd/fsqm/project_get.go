@@ -33,5 +33,5 @@ var cmdProjectGet = &cobra.Command{
 }
 
 func init() {
-	cmdGroup.AddCommand(cmdProjectGet)
+	cmdProject.AddCommand(cmdProjectGet)
 }

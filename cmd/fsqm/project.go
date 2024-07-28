@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/parkervcp/fsquota"
+
 	"github.com/spf13/cobra"
 )
 
@@ -14,11 +15,11 @@ func init() {
 	cmdRoot.AddCommand(cmdProject)
 }
 
-func lookupProject(projectIdOrGroupName string) (prj *fsquota.Project, err error) {
-	if isNumeric(projectIdOrGroupName) {
-		prj.ID = projectIdOrGroupName
+func lookupProject(projectIdOrName string) (prj *fsquota.Project, err error) {
+	if isNumeric(projectIdOrName) {
+		prj.ID = projectIdOrName
 		return
 	}
 
-	return fsquota.LookupProject(projectIdOrGroupName)
+	return fsquota.LookupProject(projectIdOrName)
 }
