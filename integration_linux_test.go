@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/anexia-it/fsquota"
+	"github.com/parkervcp/fsquota"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

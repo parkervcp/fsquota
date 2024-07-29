@@ -4,8 +4,7 @@ import (
 	"errors"
 	"os/user"
 
-	"github.com/anexia-it/fsquota"
-	"github.com/speijnik/go-errortree"
+	"github.com/parkervcp/fsquota"
 	"github.com/spf13/cobra"
 )
 
@@ -22,12 +21,12 @@ var cmdGroupSet = &cobra.Command{
 		var bytesPresent, filesPresent bool
 		var parseErr error
 
-		if bytesSoft, bytesHard, bytesPresent, parseErr = parseLimitsFlag(cmd, "bytes"); parseErr != nil {
-			err = errortree.Add(err, "bytes", parseErr)
+		if bytesSoft, bytesHard, bytesPresent, err = parseLimitsFlag(cmd, "bytes"); err != nil {
+			return err
 		}
 
 		if filesSoft, filesHard, filesPresent, parseErr = parseLimitsFlag(cmd, "files"); parseErr != nil {
-			err = errortree.Add(err, "files", parseErr)
+			return err
 		}
 
 		if err != nil {

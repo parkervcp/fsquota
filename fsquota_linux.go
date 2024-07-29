@@ -11,8 +11,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/docker/docker/pkg/mount"
-	"github.com/speijnik/go-errortree"
+	"github.com/moby/sys/mountinfo"
 	"golang.org/x/sys/unix"
 )
 
@@ -72,6 +71,14 @@ func getGroupInfo(path string, group *user.Group) (info *Info, err error) {
 	return getQuota(groupQuota, path, group.Gid)
 }
 
+func setProjectQuota(path string, project *Project, limits *Limits) (info *Info, err error) {
+	return setQuota(projectQuota, path, project.ID, limits)
+}
+
+func getProjectInfo(path string, project *Project) (info *Info, err error) {
+	return getQuota(projectQuota, path, project.ID)
+}
+
 func pathToDevice(path string) (device string, err error) {
 	if path, err = filepath.EvalSymlinks(path); err != nil {
 		// Evaluate symlinks first
@@ -111,8 +118,8 @@ func pathToDevice(path string) (device string, err error) {
 	devMinor := unix.Minor(statT.Dev)
 
 	// Retrieve mount info
-	var mountInfos []*mount.Info
-	if mountInfos, err = mount.GetMounts(); err != nil {
+	var mountInfos []*mountinfo.Info
+	if mountInfos, err = mountinfo.GetMounts(nil); err != nil {
 		return
 	}
 
@@ -130,14 +137,13 @@ func pathToDevice(path string) (device string, err error) {
 
 func prepareArguments(path string, idString string) (device string, id uint32, err error) {
 	// Look up the device beneath the provided path
-	var pathErr error
-	if device, pathErr = pathToDevice(path); pathErr != nil {
-		err = errortree.Add(err, "path", pathErr)
+	if device, err = pathToDevice(path); err != nil {
+		return device, id, err
 	}
 
 	// Convert ID string to uint32
-	if id64, parseErr := strconv.ParseUint(idString, 10, 32); parseErr != nil {
-		err = errortree.Add(err, "id", parseErr)
+	if id64, err := strconv.ParseUint(idString, 10, 32); err != nil {
+		return device, id, err
 	} else {
 		id = uint32(id64)
 	}
@@ -180,6 +186,12 @@ func getUserReport(path string) (report *Report, err error) {
 func getGroupReport(path string) (report *Report, err error) {
 	return getReport(path, groupQuota, func() ([]uint32, error) {
 		return getIDsFromUserOrGroupFile(groupFile)
+	})
+}
+
+func getProjectReport(path string) (report *Report, err error) {
+	return getReport(path, projectQuota, func() ([]uint32, error) {
+		return getIDsFromProjectFile(projectFile)
 	})
 }
 
@@ -291,4 +303,8 @@ func userQuotasSupported(path string) (supported bool, err error) {
 
 func groupQuotasSupported(path string) (supported bool, err error) {
 	return quotasSupported(groupQuota, path)
+}
+
+func projectQuotasSupported(path string) (supported bool, err error) {
+	return quotasSupported(projectQuota, path)
 }
