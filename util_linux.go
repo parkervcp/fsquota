@@ -6,9 +6,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/hashicorp/go-version"
+	"golang.org/x/sys/unix"
 )
 
 type Project struct {
@@ -19,8 +19,8 @@ type Project struct {
 var expectedKernelVersion = version.Must(version.NewVersion("4.6.0"))
 
 func isKernel46OrLater() (is46OrLater bool, err error) {
-	var utsname syscall.Utsname
-	if err = syscall.Uname(&utsname); err != nil {
+	var utsname unix.Utsname
+	if err = unix.Uname(&utsname); err != nil {
 		return
 	}
 

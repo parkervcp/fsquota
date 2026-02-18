@@ -2,8 +2,9 @@ package fsquota
 
 import (
 	"os"
-	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 type quotaCtlCmd uintptr
@@ -134,11 +135,11 @@ func quotactl(cmd quotaCtlCmd, typ quotaCtlType, device string, id uint32, targe
 	fullCommand := getQuotaCommand(cmd, typ)
 
 	var deviceNamePtr *byte
-	if deviceNamePtr, err = syscall.BytePtrFromString(device); err != nil {
+	if deviceNamePtr, err = unix.BytePtrFromString(device); err != nil {
 		return
 	}
 
-	if _, _, errno := syscall.RawSyscall6(syscall.SYS_QUOTACTL, fullCommand,
+	if _, _, errno := unix.RawSyscall6(unix.SYS_QUOTACTL, fullCommand,
 		uintptr(unsafe.Pointer(deviceNamePtr)), uintptr(id), uintptr(target), 0, 0); errno != 0 {
 		err = os.NewSyscallError("quotactl", errno)
 	}
