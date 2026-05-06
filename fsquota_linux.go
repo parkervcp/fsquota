@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"syscall"
 	"unsafe"
 
 	"github.com/moby/sys/mountinfo"
@@ -106,9 +105,9 @@ func pathToDevice(path string) (device string, err error) {
 
 	// Getting this far means path was not a device, but a regular path
 	// We thus need to retrieve the device underlying the path
-	var statT *syscall.Stat_t
+	var statT *unix.Stat_t
 	var statTOK bool
-	if statT, statTOK = statRes.Sys().(*syscall.Stat_t); !statTOK {
+	if statT, statTOK = statRes.Sys().(*unix.Stat_t); !statTOK {
 		err = errors.New("internal error: could not retrieve Stat_t from stat result")
 		return
 	}
